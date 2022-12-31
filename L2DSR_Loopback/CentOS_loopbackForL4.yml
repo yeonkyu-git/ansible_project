@@ -1,0 +1,34 @@
+---
+- name: debug L4 IP 
+  debug:
+    msg:
+      - "{{ ansible_hostname }} L4 IP is {{ l4_ip }}"
+
+- name: Create a Loopback Network interface file 
+  file:
+    path: /etc/sysconfig/network-scripts/ifcfg-lo:0
+    state: touch
+
+- name: insert content to loopback interface file
+  blockinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-lo:0
+    block: |
+      DEVICE=lo:0
+      BOOTPROTO=static
+      IPADDR={{ l4_ip }}
+      NETMASK=255.255.255.255
+      ONBOOT=yes
+      NAME=loopback
+
+- name: Update Kernel Parameter for arp
+  blockinfile:
+    path: /etc/sysctl.conf
+    block: |
+      net.ipv4.conf.default.arp_ignore = 1
+      net.ipv4.conf.default.arp_announce = 2
+
+- name: ifup loopback network interface 
+  command: ifup lo:0
+
+- name: kernel parameter update command 
+  command: sysctl -p

@@ -1,0 +1,5 @@
+---
+l4_ip: "{{
+  '192.168.1.250' if ansible_hostname == 'ansible-node201' or ansible_hostname == 'ansible-node202'
+  else '192.168.1.150' if ansible_hostname == 'ansible-node101' or ansible_hostname == 'ansible-node102'
+}}"
