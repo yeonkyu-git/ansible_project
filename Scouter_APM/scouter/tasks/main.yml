@@ -1,0 +1,25 @@
+- name: Install jdk 
+  yum:
+    name: java-11-openjdk-devel.x86_64
+    state: present
+
+- name: Create group for Scouter
+  group:
+    name: "{{ scouter_group }}"
+    state: present
+    gid: "{{ scouter_gid }}"
+
+- name: Create user for Scouter
+  user:
+    name: "{{ scouter_user }}"
+    comment: Scouter User
+    uid: "{{ scouter_uid }}"
+    group: "{{ scouter_group }}"
+
+- name: Install Scouter in Master Server
+  import_tasks: master.yml
+  when: "'master' in group_names"
+
+- name: Install Scouter in Master Server
+  import_tasks: agent.yml
+  when: "'agent' in group_names"

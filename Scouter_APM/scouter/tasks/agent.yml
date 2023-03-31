@@ -1,0 +1,21 @@
+- name: Download Server Install file
+  get_url:
+    url: https://github.com/scouter-project/scouter/releases/download/v2.17.1/scouter-all-2.17.1.tar.gz
+    dest: /opt/scouter.tar.gz
+    owner: "{{ scouter_user }}"
+    group: "{{ scouter_group }}"
+
+- name: Unarchive install file
+  unarchive:
+    src: /opt/scouter.tar.gz
+    dest: /opt/
+    mode: 0755
+    owner: "{{ scouter_user }}"
+    group: "{{ scouter_group }}"
+
+- name: execute scouter
+  shell: ./host.sh
+  args:
+    chdir: /opt/scouter/agent.host
+    executable: /bin/bash
+    
