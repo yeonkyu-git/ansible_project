@@ -1,0 +1,9 @@
+- name: Create User Account
+  become: true
+  user:
+    name : "{{ item.user_name }}"
+    comment: "{{ item.comment }}"
+    uid: "{{ item.user_uid }}"
+    group: "{{ item.group }}"
+  with_items: 
+    - "{{ user }}"

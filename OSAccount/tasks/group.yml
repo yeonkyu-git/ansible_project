@@ -1,0 +1,6 @@
+- name: Create User Group
+  become: true
+  group:
+    name: "{{ group_name }}"
+    gid: "{{ group_gid }}"
+    state: present

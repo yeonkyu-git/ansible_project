@@ -1,0 +1,7 @@
+ansible_host: 192.168.1.202
+maria_db: foo
+maria_user: db_user
+maria_password: Passw0rd
+maria_table_name: member
+mysql_root_password: Passw0rd
+sql_path: /home/vagrant/web_db/sql/test.sql

@@ -1,0 +1,22 @@
+## CentOS
+centos1 ansible_host=192.168.1.201 ansible_connection=ssh ansible_user=vagrant ansible_ssh_pass=vagrant
+centos2 ansible_host=192.168.1.202 ansible_connection=ssh ansible_user=vagrant ansible_ssh_pass=vagrant
+
+## Ubuntu
+ubuntu1 ansible_host=192.168.1.101 ansible_connection=ssh ansible_user=vagrant ansible_ssh_pass=vagrant
+ubuntu2 ansible_host=192.168.1.102 ansible_connection=ssh ansible_user=vagrant ansible_ssh_pass=vagrant
+
+
+[centos]
+centos1
+centos2
+
+[ubuntu]
+ubuntu1
+ubuntu2
+
+[nodes]
+centos1
+centos2
+ubuntu1
+ubuntu2

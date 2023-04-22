@@ -1,0 +1,4 @@
+user:
+  - {user_name: yeonkyu, user_uid: "{{ 60000 | random(50000) }}", group: usrgrp, comment: YEONKYU KIM}
+  - {user_name: injeong, user_uid: "{{ 60000 | random(50000) }}", group: usrgrp, comment: INJEONG CHEON}
+  

@@ -1,0 +1,80 @@
+- name: Install Dependency
+  yum: name={{ item }} state=present
+  with_items: 
+    - git
+    - java-11-openjdk-devel.x86_64
+
+- name: Create Download tomcat folder 
+  become: yes
+  file:
+    path: /opt/tomcat8
+    state: directory
+    owner: vagrant
+    group: vagrant
+
+- name: Download Tomcat using unarchive
+  become: yes
+  unarchive:
+    src: "{{ tomcat_url }}"
+    dest: /opt/tomcat8
+    mode: 0755
+    remote_src: yes
+    group: vagrant
+    owner: vagrant
+    validate_certs: no
+
+- name: Move files to the /opt/tomcat8 directory
+  become: yes
+  shell: "mv /opt/tomcat8/apache*/* /opt/tomcat8/"
+  ignore_errors: yes
+
+- name: Creating a service file
+  become: yes
+  copy: 
+    content: |-
+      [Unit]
+      Description=Tomcat Service
+      Requires=network.target
+      After=network.target
+      [Service]
+      Type=forking
+      User=vagrant
+      Environment="CATALINA_PID=/opt/tomcat8/logs/tomcat.pid"
+      Environment="CATALINA_BASE=/opt/tomcat8"
+      Environment="CATALINA_HOME=/opt/tomcat8"
+      Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+      ExecStart=/opt/tomcat8/bin/startup.sh
+      ExecStop=/opt/tomcat8/bin/shutdown.sh
+      Restart=on-abnormal
+      [Install]
+      WantedBy=multi-user.target
+    dest: /etc/systemd/system/tomcat.service
+
+- name: Reload the SystemD to re-read configurations
+  become: yes
+  systemd:
+      daemon-reload: yes
+  
+- name: Git pull sourceCode
+  git:
+    repo: "{{ git_repo }}"
+    dest: "{{ git_dest }}"
+    force: yes
+    clone: yes
+
+- name: Maven Build
+  shell:
+    cmd: ./mvnw clean package
+    chdir: "{{ git_dest }}"
+
+- name: Move war file
+  become: yes
+  shell: "mv {{ git_dest }}/target/application-0.0.1-SNAPSHOT.war /opt/tomcat8/webapps/application.war"
+  ignore_errors: yes
+
+- name: Enable the tomcat service and start
+  become: yes
+  systemd:
+    name: tomcat
+    enabled: yes
+    state: restarted

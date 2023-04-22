@@ -1,0 +1,13 @@
+---
+- name: Create OS Account for Linux
+  hosts: centos
+  become: no
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - vars/var_group.yml
+    - vars/var_user.yml
+
+  tasks:
+    - include_tasks: tasks/group.yml
+    - include_tasks: tasks/account.yml

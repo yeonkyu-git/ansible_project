@@ -1,0 +1,53 @@
+- name: Install Dependency
+  yum: name=MySQL-python state=present
+
+- name: Install MariaDB
+  yum: name={{ item }} state=present
+  with_items: 
+    - mariadb-server 
+
+- name: Start MariaDB
+  service:  
+    name: mariadb
+    state: started
+
+- name: update mysql root password
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: root
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+    check_implicit_admin: yes
+    priv: "*.*:ALL,GRANT"
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+
+- name: Create MariaDB User
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ maria_user }}"
+    password: "{{ maria_password }}"
+    priv: '*.*:ALL'
+    state: present
+    host: '%'
+
+- name: Create a New Test DB
+  mysql_db: name={{ maria_db }} state=present login_user=root login_password={{ mysql_root_password }}
+
+- name: Copy SQL File
+  copy:
+    src: "{{ sql_path }}"
+    dest: /home/vagrant/test.sql
+
+- name: Create a New Test Table in foo Database
+  mysql_db: 
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ maria_table_name }}" 
+    state: import 
+    target: /home/vagrant/test.sql

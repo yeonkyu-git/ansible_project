@@ -1,0 +1,14 @@
+---
+- name: Deploy web/was and db 
+  hosts: centos
+  gather_facts: yes
+  become: yes
+  
+  tasks:
+    - include: tasks/mariadb.yml
+      when: ansible_host == "192.168.1.202"
+
+    - include: tasks/webapp.yml
+      when: ansible_host == "192.168.1.201"
+
+

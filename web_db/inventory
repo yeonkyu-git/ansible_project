@@ -1,0 +1,14 @@
+## CentOS
+centos_was  
+centos_db 
+
+[was]
+centos_was
+
+[db]
+centos_db
+
+
+[centos]
+centos_was
+centos_db
