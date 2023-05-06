@@ -1,0 +1,11 @@
+---
+- name: Create OS Account for Linux
+  hosts: node
+  gather_facts: yes
+  become: yes
+  vars_files:
+    - vars/lvm_info.yml
+
+  tasks:
+    # - include_tasks: tasks/test.yml
+    - include_tasks: tasks/lvm.yml

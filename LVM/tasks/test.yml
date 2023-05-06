@@ -1,0 +1,6 @@
+- name: test ping
+  debug:
+    msg: System {{ ansible_hostname }} and {{ item.device }}
+  when: item.hostname == ansible_hostname
+  with_items: 
+    - "{{ partition }}"

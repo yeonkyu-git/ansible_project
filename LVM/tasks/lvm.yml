@@ -1,0 +1,73 @@
+# 1. Block Disk Partitioning
+- name: Create a new primary pratition for LVM
+  parted:
+    device: "{{ item.device }}" # 변수 
+    number: 1
+    flags: [ lvm ]
+    state: present
+  when: item.hostname == ansible_hostname
+  with_items: 
+    - "{{ partitions }}"
+
+# 2. Create PV & VG
+- name: Create a PV and VG
+  lvg:
+    vg: "{{ item.vg }}" # 변수 
+    pvs: "{{ item.pv }}" # 변수
+    state: present
+  when: item.hostname == ansible_hostname
+  with_items: 
+    - "{{ vgs }}"
+
+# 3. Create LV
+- name: Create a LV
+  lvol:
+    vg: "{{ item.vg }}" # 변수 
+    lv: "{{ item.lv }}" # 변수 
+    size: "{{ item.size }}" # 변수 
+    state: present
+  when: item.hostname == ansible_hostname
+  with_items: 
+    - "{{ lvs }}"
+  ignore_errors: true
+
+# 4. LV Format
+- name: Create a ext4 fileSystem on LV
+  filesystem:
+    fstype: "{{ item.fstype }}" # 변수
+    dev: "/dev/mapper/{{ item.vg }}-{{ item.lv }}" # 변수
+  when: item.hostname == ansible_hostname
+  with_items: 
+    - "{{ lvs }}"
+
+# 6. Create Mount Point
+- name: create mount point
+  file:
+    path: "{{ item.mount }}"
+    state: directory
+    mode: '0755'
+  when: item.hostname == ansible_hostname
+  with_items: 
+    - "{{ lvs }}" 
+
+# 5. LV Mount 
+- name: mount LV
+  mount:
+    path: "{{ item.mount }}" # 변수 
+    src: "/dev/mapper/{{ item.vg }}-{{ item.lv }}" # 변수
+    fstype: "{{ item.fstype }}" # 변수
+    state: mounted
+  when: item.hostname == ansible_hostname
+  with_items: 
+    - "{{ lvs }}" 
+
+# 6. Write Disk mount information in /etc/fstab 
+- name: Add Disk Information in 
+  blockinfile:
+    path: /etc/fstab
+    block: | # 변수 치환 
+      /dev/mapper/{{ item.vg }}-{{ item.lv }} {{ item.mount }}  ext4  defaults  0 0 
+  when: item.hostname == ansible_hostname
+  with_items: 
+    - "{{ lvs }}" 
+  

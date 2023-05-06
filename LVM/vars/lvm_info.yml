@@ -1,0 +1,29 @@
+# node01
+partitions:
+  - { hostname: node01, device: /dev/sdb }
+  - { hostname: node01, device: /dev/sdc }
+  - { hostname: node01, device: /dev/sdd }
+  - { hostname: node02, device: /dev/sdb }
+  - { hostname: node02, device: /dev/sdc }
+  - { hostname: node02, device: /dev/sdd }
+
+vgs:
+  - { hostname: node01, pv: /dev/sdb1, vg: apvg_1 }
+  - { hostname: node01, pv: /dev/sdc1, vg: datavg_1 }
+  - { hostname: node01, pv: /dev/sdd1, vg: exvg_1 }
+  - { hostname: node02, pv: /dev/sdb1, vg: apvg_2 }
+  - { hostname: node02, pv: /dev/sdc1, vg: datavg_2 }
+  - { hostname: node02, pv: /dev/sdd1, vg: exvg_2 }
+
+lvs:
+  - { hostname: node01, vg: apvg_1, lv: nginx_lv, size: 10g, fstype: ext4, mount: /nginx }
+  - { hostname: node01, vg: apvg_1, lv: log_lv, size: 100%FREE, fstype: ext4, mount: /aplog }
+  - { hostname: node01, vg: datavg_1, lv: tibero_lv, size: 5g, fstype: ext4, mount: /tibero }
+  - { hostname: node01, vg: datavg_1, lv: tibero_data_lv, size: 10g, fstype: ext4, mount: /tibero_data }
+  - { hostname: node01, vg: datavg_1, lv: tibero_log_lv, size: 100%FREE, fstype: ext4, mount: /tibero_log }
+  - { hostname: node01, vg: exvg_1, lv: util_lv, size: 100%FREE, fstype: ext4, mount: /utils }
+  - { hostname: node02, vg: apvg_2, lv: tomcat_lv, size: 5g, fstype: ext4, mount: /tomcat }
+  - { hostname: node02, vg: apvg_2, lv: log_lv, size: 100%FREE, fstype: ext4, mount: /aplog }
+  - { hostname: node02, vg: datavg_2, lv: maria_lv, size: 15g, fstype: ext4, mount: /maria }
+  - { hostname: node02, vg: datavg_2, lv: maria_data_lv, size: 100%FREE, fstype: ext4, mount: /maria_data }
+  - { hostname: node02, vg: exvg_2, lv: util_lv, size: 100%FREE, fstype: ext4, mount: /utils }

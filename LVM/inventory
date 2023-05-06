@@ -1,0 +1,7 @@
+## CentOS
+node01 ansible_host=192.168.1.37 ansible_connection=ssh ansible_user=admin ansible_ssh_pass=password ansible_sudo_pass=password
+node02 ansible_host=192.168.1.38 ansible_connection=ssh ansible_user=admin ansible_ssh_pass=password ansible_sudo_pass=password
+
+[node]
+node01
+node02
